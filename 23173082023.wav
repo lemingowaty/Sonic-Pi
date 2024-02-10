@@ -1,0 +1,75 @@
+def bline1 (notes = [:e2,:e3])
+  with_synth :chipbass do
+    4.times do
+      play notes, release: 0.5, sustain: 0.5
+      sleep 1
+    end
+  end
+end
+live_loop :mtnm do
+  bds = :bd_haus
+  bdss = ring((1.0/12)*15,(1.0/12)*17,(1.0/12)*21)
+  with_bpm_mul 2 do
+    ##| sample :bd_tek, amp: 2
+    
+    use_random_seed "DUPA".to_i
+    2.times do
+      2.times do |z|
+        
+        
+        sample bds, beat_stretch: (1.0/12)*12
+        
+        density 4 do |i|
+          sample bds, on: i==2&&z==1
+          sample :drum_cymbal_closed, amp: 1.0
+          sleep 1
+        end
+        3.times do |j|
+          br = ring( 0,1 ).tick
+          density 2 do |i|
+            sample :drum_cymbal_closed, beat_stretch: rand(0.9)*4, on: i==0
+            if (i==br&&j!=1)
+              sample bds , beat_stretch: bdss.tick
+            end
+            sleep 0.5
+            
+            sample :drum_cymbal_closed, beat_stretch: rand(0.9)*4
+            ##| sample :drum_cymbal_closed, amp: 0.8
+            sleep 0.5
+          end
+        end
+        //
+      end
+    end
+    density 2 do
+      sample :drum_bass_hard
+      sleep 0.5
+      sample :drum_bass_hard
+      sleep 0.5
+    end
+  end
+end
+##| live_loop :bline, sync: :mtnm do
+##|   with_bpm_mul 1 do
+##|     density 2 do
+##|       bline1 ([:a0,:a1,:a2])
+##|       with_fx :ixi_techno, phase: rand(0.75), mix: 0.25 do
+##|         density 2 do
+##|           bline1([:a2,:a1,:a1-5])
+##|           bline1([:a1])
+##|         end
+##|         bline1 ([:a0,:a1,:a1+7])
+##|       end
+##|       bline1 ([:a0,:a1,:a2])
+##|       with_fx :ixi_techno, phase: ring(0.25,0.5).tick, mix: 0.25 do
+##|         density 2 do
+##|           bline1([:a2,:a1,:a1-5])
+##|           bline1([:a1,:a2])
+##|         end
+##|         density 2 do
+##|           bline1 ([:a0,:a1,:a1+7])
+##|         end
+##|       end
+##|     end
+##|   end
+##| end
